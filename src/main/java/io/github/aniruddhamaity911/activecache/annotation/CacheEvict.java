@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface CacheEvict {
 
     /**
-     * Logical cache namespace (e.g. "users", "products").
+     * Logical cache namespace.
      */
     String cacheName();
 
