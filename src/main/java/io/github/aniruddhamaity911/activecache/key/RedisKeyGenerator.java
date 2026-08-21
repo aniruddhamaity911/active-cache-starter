@@ -24,6 +24,6 @@ public class RedisKeyGenerator {
     public String generate(String cacheName, Object key) {
         String application_name =  environment.getProperty("spring.application.name",
                 "application");
-        return String.format("%s:%s:%s", application_name, cacheName, key);
+        return String.format("%s:%s:%s", application_name, cacheName, key.toString());
     }
 }
