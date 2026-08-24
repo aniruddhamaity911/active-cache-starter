@@ -1,5 +1,6 @@
 package io.github.aniruddhamaity911.activecache.key;
 
+import io.github.aniruddhamaity911.activecache.constant.ActiveCacheConstants;
 import org.springframework.core.env.Environment;
 
 /**
@@ -23,7 +24,7 @@ public class RedisKeyGenerator {
      */
     public String generate(String cacheName, Object key) {
         String application_name =  environment.getProperty("spring.application.name",
-                "application");
-        return String.format("%s:%s:%s", application_name, cacheName, key.toString());
+                ActiveCacheConstants.DEFAULT_APPLICATION_NAME);
+        return String.format("%s%s%s%s%s", application_name,ActiveCacheConstants.KEY_SEPARATOR ,cacheName,ActiveCacheConstants.KEY_SEPARATOR ,key.toString());
     }
 }

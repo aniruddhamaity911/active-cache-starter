@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
  * successfully, the corresponding cache entry is removed from Redis.</p>
  */
 @Aspect
-@Component
 public class CacheEvictAspect {
 
     private final RedisCacheService redisCacheService;

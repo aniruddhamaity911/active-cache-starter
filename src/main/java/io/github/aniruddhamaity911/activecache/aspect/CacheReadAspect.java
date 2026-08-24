@@ -23,7 +23,6 @@ import java.time.Duration;
  * stored in Redis before being returned.</p>
  */
 @Aspect
-@Component
 public class CacheReadAspect {
 
     private final RedisCacheService redisCacheService;

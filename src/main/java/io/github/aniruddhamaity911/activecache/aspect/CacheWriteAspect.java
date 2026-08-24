@@ -22,7 +22,6 @@ import java.time.Duration;
  * by the {@link CacheWrite} annotation.</p>
  */
 @Aspect
-@Component
 public class CacheWriteAspect {
 
     private final RedisCacheService redisCacheService;
