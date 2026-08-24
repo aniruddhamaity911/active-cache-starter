@@ -31,18 +31,19 @@ public class ActiveCacheAutoConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(ActiveCacheAutoConfiguration.class);
     @Bean("activeCacheRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory,
-            ObjectMapper objectMapper) {
+            RedisConnectionFactory connectionFactory) {
         LOG.info("Creating RedisTemplate");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
         redisTemplate.setConnectionFactory(connectionFactory);
 
-        StringRedisSerializer keySerializer = new StringRedisSerializer();
-
+        StringRedisSerializer keySerializer =
+                new StringRedisSerializer();
+        ObjectMapper objectMapper = new ObjectMapper();
         GenericJacksonJsonRedisSerializer valueSerializer =
                 new GenericJacksonJsonRedisSerializer(objectMapper);
 
+        redisTemplate.setKeySerializer(keySerializer);
         redisTemplate.setKeySerializer(keySerializer);
         redisTemplate.setHashKeySerializer(keySerializer);
 
