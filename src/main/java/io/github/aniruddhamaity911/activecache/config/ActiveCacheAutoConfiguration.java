@@ -1,6 +1,8 @@
 package io.github.aniruddhamaity911.activecache.config;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import tools.jackson.databind.ObjectMapper;
 import io.github.aniruddhamaity911.activecache.aspect.CacheEvictAspect;
@@ -26,12 +28,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class ActiveCacheAutoConfiguration {
-
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveCacheAutoConfiguration.class);
     @Bean("activeCacheRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(
             RedisConnectionFactory connectionFactory,
             ObjectMapper objectMapper) {
-
+        LOG.info("Creating RedisTemplate");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
         redisTemplate.setConnectionFactory(connectionFactory);
@@ -48,7 +50,7 @@ public class ActiveCacheAutoConfiguration {
         redisTemplate.setHashValueSerializer(valueSerializer);
 
         redisTemplate.afterPropertiesSet();
-
+        LOG.info("Created RedisTemplate");
         return redisTemplate;
     }
 
@@ -56,17 +58,19 @@ public class ActiveCacheAutoConfiguration {
     public RedisCacheService redisCacheService(
             @Qualifier("activeCacheRedisTemplate")
             RedisTemplate<String, Object> redisTemplate) {
-
+        LOG.info("Creating RedisCacheService");
         return new DefaultRedisCacheService(redisTemplate);
     }
 
     @Bean
     public RedisKeyGenerator redisKeyGenerator(Environment environment) {
+        LOG.info("Creating RedisKeyGenerator");
         return new RedisKeyGenerator(environment);
     }
 
     @Bean
     public SpelKeyEvaluator spELKeyEvaluator() {
+        LOG.info("Creating SpelKeyEvaluator");
         return new SpelKeyEvaluator();
     }
 
@@ -75,7 +79,7 @@ public class ActiveCacheAutoConfiguration {
             RedisCacheService redisCacheService,
             RedisKeyGenerator redisKeyGenerator,
             SpelKeyEvaluator spELKeyEvaluator) {
-
+        LOG.info("Creating CacheReadAspect");
         return new CacheReadAspect(
                 redisCacheService,
                 redisKeyGenerator,
@@ -88,7 +92,7 @@ public class ActiveCacheAutoConfiguration {
             RedisCacheService redisCacheService,
             RedisKeyGenerator redisKeyGenerator,
             SpelKeyEvaluator spELKeyEvaluator) {
-
+        LOG.info("Creating CacheWriteAspect");
         return new CacheWriteAspect(
                 redisCacheService,
                 redisKeyGenerator,
@@ -101,7 +105,7 @@ public class ActiveCacheAutoConfiguration {
             RedisCacheService redisCacheService,
             RedisKeyGenerator redisKeyGenerator,
             SpelKeyEvaluator spELKeyEvaluator) {
-
+        LOG.info("Creating CacheEvictAspect");
         return new CacheEvictAspect(
                 redisCacheService,
                 redisKeyGenerator,

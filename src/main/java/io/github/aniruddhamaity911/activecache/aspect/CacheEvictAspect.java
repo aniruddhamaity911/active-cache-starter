@@ -9,6 +9,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -21,7 +23,7 @@ import java.lang.reflect.Method;
  */
 @Aspect
 public class CacheEvictAspect {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CacheEvictAspect.class);
     private final RedisCacheService redisCacheService;
     private final RedisKeyGenerator redisKeyGenerator;
     private final SpelKeyEvaluator spelKeyEvaluator;
@@ -38,9 +40,11 @@ public class CacheEvictAspect {
             RedisKeyGenerator redisKeyGenerator,
             SpelKeyEvaluator spelKeyEvaluator
     ) {
+        LOG.info("Configuring CacheEvictAspect...");
         this.redisCacheService = redisCacheService;
         this.redisKeyGenerator = redisKeyGenerator;
         this.spelKeyEvaluator = spelKeyEvaluator;
+        LOG.info("CacheEvictAspect configured");
     }
 
     /**
@@ -61,6 +65,7 @@ public class CacheEvictAspect {
             ProceedingJoinPoint joinPoint,
             CacheEvict cacheEvict
     ) throws Throwable {
+        LOG.info("CacheEvictAspect starting...");
 
         Object result = joinPoint.proceed();
 
@@ -80,9 +85,10 @@ public class CacheEvictAspect {
                 cacheEvict.cacheName(),
                 String.valueOf(evaluatedKey)
         );
-
+        LOG.debug("Evicting cache using key {}",redisKey);
         redisCacheService.evict(redisKey);
-
+        LOG.debug("Evicted cache using key {}",redisKey);
+        LOG.info("CacheEvictAspect ending...");
         return result;
     }
 }

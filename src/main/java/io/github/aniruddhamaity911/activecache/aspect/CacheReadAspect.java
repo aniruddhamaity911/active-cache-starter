@@ -9,6 +9,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -24,7 +26,7 @@ import java.time.Duration;
  */
 @Aspect
 public class CacheReadAspect {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CacheReadAspect.class);
     private final RedisCacheService redisCacheService;
     private final RedisKeyGenerator redisKeyGenerator;
     private final SpelKeyEvaluator spelKeyEvaluator;
@@ -41,9 +43,11 @@ public class CacheReadAspect {
             RedisKeyGenerator redisKeyGenerator,
             SpelKeyEvaluator spelKeyEvaluator
     ) {
+        LOG.info("configuring CacheReadAspect...");
         this.redisCacheService = redisCacheService;
         this.redisKeyGenerator = redisKeyGenerator;
         this.spelKeyEvaluator = spelKeyEvaluator;
+        LOG.info("CacheReadAspect configured.");
     }
 
     /**
@@ -68,10 +72,10 @@ public class CacheReadAspect {
             ProceedingJoinPoint joinPoint,
             CacheRead cacheRead
     ) throws Throwable {
-
+        LOG.info("CacheReadAspect starting...");
         MethodSignature signature =
                 (MethodSignature) joinPoint.getSignature();
-
+        LOG.info("CacheReadAspect method Signature: {}", signature);
         Method method = signature.getMethod();
 
         Object evaluatedKey = spelKeyEvaluator.evaluate(
@@ -85,15 +89,16 @@ public class CacheReadAspect {
                 cacheRead.cacheName(),
                 String.valueOf(evaluatedKey)
         );
-
+        LOG.debug("CacheReadAspect key: {}, evaluatedKey: {}", cacheRead.key(), redisKey);
         Object cachedValue = redisCacheService.get(redisKey);
 
         if (cachedValue != null) {
+            LOG.debug("CacheReadAspect find cached value: {}", cachedValue);
             return cachedValue;
         }
-
+        LOG.info("CacheReadAspect cache missed,Retriving data from database");
         Object result = joinPoint.proceed();
-
+        LOG.debug("storing the data in cache {}",result);
         redisCacheService.put(
                 redisKey,
                 result,

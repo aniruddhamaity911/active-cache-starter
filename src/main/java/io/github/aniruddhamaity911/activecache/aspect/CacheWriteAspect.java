@@ -9,6 +9,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -24,6 +26,7 @@ import java.time.Duration;
 @Aspect
 public class CacheWriteAspect {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CacheWriteAspect.class);
     private final RedisCacheService redisCacheService;
     private final RedisKeyGenerator redisKeyGenerator;
     private final SpelKeyEvaluator spelKeyEvaluator;
@@ -40,9 +43,11 @@ public class CacheWriteAspect {
             RedisKeyGenerator redisKeyGenerator,
             SpelKeyEvaluator spelKeyEvaluator
     ) {
+        LOG.info("Initializing CacheWriteAspect");
         this.redisCacheService = redisCacheService;
         this.redisKeyGenerator = redisKeyGenerator;
         this.spelKeyEvaluator = spelKeyEvaluator;
+        LOG.info("Initialized CacheWriteAspect");
     }
 
     /**
@@ -62,7 +67,7 @@ public class CacheWriteAspect {
             ProceedingJoinPoint joinPoint,
             CacheWrite cacheWrite
     ) throws Throwable {
-
+        LOG.info("CacheWriteAspect starting...");
         Object result = joinPoint.proceed();
 
         MethodSignature signature =
@@ -81,13 +86,14 @@ public class CacheWriteAspect {
                 cacheWrite.cacheName(),
                 String.valueOf(evaluatedKey)
         );
-
+        LOG.debug("storing the data in cache for key {} and value {}",redisKey,result);
+        LOG.info("storing the value in cache");
         redisCacheService.put(
                 redisKey,
                 result,
                 Duration.ofSeconds(cacheWrite.ttl())
         );
-
+        LOG.info("CacheWriteAspect ending...");
         return result;
     }
 }
