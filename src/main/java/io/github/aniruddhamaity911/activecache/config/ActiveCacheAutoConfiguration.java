@@ -29,9 +29,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class ActiveCacheAutoConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(ActiveCacheAutoConfiguration.class);
+    @Bean
+    public ObjectMapper activeCacheObjectMapper() {
+        return new ObjectMapper();
+    }
     @Bean("activeCacheRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory) {
+            RedisConnectionFactory connectionFactory,ObjectMapper objectMapper) {
         LOG.info("Creating RedisTemplate");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
@@ -39,11 +43,9 @@ public class ActiveCacheAutoConfiguration {
 
         StringRedisSerializer keySerializer =
                 new StringRedisSerializer();
-        ObjectMapper objectMapper = new ObjectMapper();
         GenericJacksonJsonRedisSerializer valueSerializer =
                 new GenericJacksonJsonRedisSerializer(objectMapper);
 
-        redisTemplate.setKeySerializer(keySerializer);
         redisTemplate.setKeySerializer(keySerializer);
         redisTemplate.setHashKeySerializer(keySerializer);
 
@@ -79,12 +81,14 @@ public class ActiveCacheAutoConfiguration {
     public CacheReadAspect cacheReadAspect(
             RedisCacheService redisCacheService,
             RedisKeyGenerator redisKeyGenerator,
-            SpelKeyEvaluator spELKeyEvaluator) {
+            SpelKeyEvaluator spELKeyEvaluator,
+            ObjectMapper objectMapper) {
         LOG.info("Creating CacheReadAspect");
         return new CacheReadAspect(
                 redisCacheService,
                 redisKeyGenerator,
-                spELKeyEvaluator
+                spELKeyEvaluator,
+                objectMapper
         );
     }
 

@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
@@ -30,6 +31,7 @@ public class CacheReadAspect {
     private final RedisCacheService redisCacheService;
     private final RedisKeyGenerator redisKeyGenerator;
     private final SpelKeyEvaluator spelKeyEvaluator;
+    private final ObjectMapper objectMapper;
 
     /**
      * Creates a {@code CacheReadAspect}.
@@ -41,8 +43,9 @@ public class CacheReadAspect {
     public CacheReadAspect(
             RedisCacheService redisCacheService,
             RedisKeyGenerator redisKeyGenerator,
-            SpelKeyEvaluator spelKeyEvaluator
+            SpelKeyEvaluator spelKeyEvaluator, ObjectMapper objectMapper
     ) {
+        this.objectMapper = objectMapper;
         LOG.info("configuring CacheReadAspect...");
         this.redisCacheService = redisCacheService;
         this.redisKeyGenerator = redisKeyGenerator;
@@ -94,7 +97,10 @@ public class CacheReadAspect {
 
         if (cachedValue != null) {
             LOG.debug("CacheReadAspect find cached value: {}", cachedValue);
-            return cachedValue;
+            Class<?> returnType = method.getReturnType();
+            return this.objectMapper.convertValue(
+                    cachedValue,
+                    returnType);
         }
         LOG.info("CacheReadAspect cache missed,Retriving data from database");
         Object result = joinPoint.proceed();
