@@ -102,7 +102,7 @@ The parent `pom.xml` must include both the application and Active Cache Starter 
 
 <modules>
     <module>active-cache-starter</module>
-    <module>student</module>
+    <module>module</module>
 </modules>
 ```
 
@@ -125,7 +125,7 @@ For example:
 
     <modules>
         <module>active-cache-starter</module>
-        <module>student</module>
+        <module>module</module>
     </modules>
 
 </project>
