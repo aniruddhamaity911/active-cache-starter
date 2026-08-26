@@ -139,7 +139,7 @@ In your application's `pom.xml`, add:
 <dependency>
     <groupId>io.github.aniruddhamaity911</groupId>
     <artifactId>active-cache-starter</artifactId>
-    <version>0.1.0</version>
+    <version>{version of the active-cache-starter}</version>
 </dependency>
 ```
 
