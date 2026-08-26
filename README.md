@@ -65,39 +65,32 @@ Active Cache AOP
 
 ---
 
-# Add Active Cache Starter to Your Project
+## Add Active Cache Starter to Your Project
 
 Active Cache Starter is currently not published to Maven Central.
 
-To use it, add the project to your application as a **local Maven dependency**.
+To use it, download the source code from the latest GitHub Release and include it in your project.
 
-### 1. Clone the Repository
+### 1. Download the Release
 
-```bash
-git clone https://github.com/aniruddhamaity911/active-cache-starter.git
-```
+Go to the repository's **Releases** page and download the latest **Source code (ZIP)**.
 
-### 2. Build the Starter
+Extract the downloaded file and place the `active-cache-starter` project inside your application's project directory.
 
-Navigate to the Active Cache Starter project and build it:
+Example:
 
-```bash
-mvn clean install
-```
-
-This installs the starter into your local Maven repository.
-
-### 3. Add the Dependency
-
-In the `pom.xml` of your Spring Boot application, add:
-
-```xml
-<dependency>
-    <groupId>io.github.aniruddhamaity911</groupId>
-    <artifactId>active-cache-starter</artifactId>
-    <version>VERSION</version>
-</dependency>
-```
+```text
+my-project/
+│
+├── active-cache-starter/
+│   ├── src/
+│   └── pom.xml
+│
+├── student/
+│   ├── src/
+│   └── pom.xml
+│
+└── pom.xml
 
 Use the version defined by the local Active Cache Starter project.
 

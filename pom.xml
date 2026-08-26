@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.github.aniruddhamaity911</groupId>
 	<artifactId>active-cache-starter</artifactId>
-	<version>0.0.1-RELEASE</version>
+	<version>1.0.0-RELEASE</version>
 	<name>Active Cache Starter</name>
 	<description>
 		Annotation-based Redis caching starter for Spring Boot applications.
