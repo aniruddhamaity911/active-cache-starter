@@ -125,6 +125,9 @@ Add the following properties to your application's `application.properties`:
 spring.data.redis.host=localhost
 spring.data.redis.port=6379
 spring.application.name=my-app
+<Optional>
+spring.data.redis.username=<if secure>
+spring.data.redis.password=<if secure>
 ```
 
 ## 3. Enable Active Cache
