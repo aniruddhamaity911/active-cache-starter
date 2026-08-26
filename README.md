@@ -69,15 +69,15 @@ Active Cache AOP
 
 Active Cache Starter is currently not published to Maven Central.
 
-To use it, download the source code from the latest GitHub Release and include it in your project.
+To use it, download the source code from the latest GitHub Release and include it as a Maven module in your project.
 
 ### 1. Download the Release
 
 Go to the repository's **Releases** page and download the latest **Source code (ZIP)**.
 
-Extract the downloaded file and place the `active-cache-starter` project inside your application's project directory.
+Extract the downloaded file and place the `active-cache-starter` project inside your application's parent project directory.
 
-Example:
+Your project structure should look similar to this:
 
 ```text
 my-project/
@@ -86,31 +86,87 @@ my-project/
 │   ├── src/
 │   └── pom.xml
 │
-├── student/
+├── module/
 │   ├── src/
 │   └── pom.xml
 │
 └── pom.xml
+```
 
-Use the version defined by the local Active Cache Starter project.
+### 2. Configure the Parent `pom.xml`
 
-> Active Cache Starter is currently intended for local/project-level usage. Maven Central publication will be added in a future release.
+The parent `pom.xml` must include both the application and Active Cache Starter as Maven modules.
 
----
+```xml
+<packaging>pom</packaging>
 
-# Quick Start
-
-## 1. Start Redis
-
-Make sure a Redis server is running and accessible by your application.
+<modules>
+    <module>active-cache-starter</module>
+    <module>student</module>
+</modules>
+```
 
 For example:
 
-```text
-localhost:6379
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+         http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>my-project</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>active-cache-starter</module>
+        <module>student</module>
+    </modules>
+
+</project>
 ```
 
-## 2. Configure Redis
+### 3. Add Active Cache Starter as a Dependency
+
+In your application's `pom.xml`, add:
+
+```xml
+<dependency>
+    <groupId>io.github.aniruddhamaity911</groupId>
+    <artifactId>active-cache-starter</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+Use the version defined in the `active-cache-starter` project's `pom.xml`.
+
+### 4. Build the Project
+
+Run the following command from the parent project directory:
+
+```bash
+mvn clean install
+```
+
+Maven will build the projects in the following order:
+
+```text
+active-cache-starter
+        ↓
+Install dependency
+        ↓
+student application
+```
+
+The Active Cache Starter can then be used by your Spring Boot application.
+
+> Active Cache Starter is currently intended for local/project-level usage. Maven repository publication will be added in a future release.
+### 5. Configure Redis
 
 Add the following properties to your application's `application.properties`:
 
@@ -124,7 +180,7 @@ spring.data.redis.username=your-username
 spring.data.redis.password=your-password
 ```
 
-## 3. Enable Active Cache
+### 6. Enable Active Cache
 
 Add `@EnableActiveCache` to your Spring Boot application:
 
