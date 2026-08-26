@@ -69,7 +69,7 @@ Active Cache AOP
 
 Active Cache Starter is currently not published to Maven Central.
 
-To use it, add the project to your application as a **local Maven module/dependency**.
+To use it, add the project to your application as a **local Maven dependency**.
 
 ### 1. Clone the Repository
 
@@ -125,9 +125,10 @@ Add the following properties to your application's `application.properties`:
 spring.data.redis.host=localhost
 spring.data.redis.port=6379
 spring.application.name=my-app
-<Optional>
-spring.data.redis.username=<if secure>
-spring.data.redis.password=<if secure>
+
+# Optional, if Redis authentication is enabled
+spring.data.redis.username=your-username
+spring.data.redis.password=your-password
 ```
 
 ## 3. Enable Active Cache
@@ -302,11 +303,11 @@ my-app:users:101
 
 ### Key Components
 
-| Component        | Example  | Description                        |
-| ---------------- | -------- | ---------------------------------- |
+| Component | Example | Description |
+| --- | --- | --- |
 | Application name | `my-app` | Value of `spring.application.name` |
-| Cache name       | `users`  | Logical cache namespace            |
-| Key              | `101`    | Evaluated SpEL expression          |
+| Cache name | `users` | Logical cache namespace |
+| Key | `101` | Evaluated SpEL expression |
 
 ---
 
@@ -318,8 +319,8 @@ For example:
 
 ```java
 @CacheRead(
-    cacheName = "users",
-    key = "#userId"
+        cacheName = "users",
+        key = "#userId"
 )
 public User getUser(Long userId) {
     // ...
@@ -330,8 +331,8 @@ For an object parameter:
 
 ```java
 @CacheRead(
-    cacheName = "users",
-    key = "#user.id"
+        cacheName = "users",
+        key = "#user.id"
 )
 public User getUser(User user) {
     // ...
@@ -348,9 +349,9 @@ The expression is evaluated at runtime to produce the actual cache key.
 
 ```java
 @CacheRead(
-    cacheName = "users",
-    key = "#userId",
-    ttl = 300
+        cacheName = "users",
+        key = "#userId",
+        ttl = 300
 )
 ```
 
@@ -435,26 +436,26 @@ A typical service can look like this:
 public class UserService {
 
     @CacheRead(
-        cacheName = "users",
-        key = "#userId",
-        ttl = 300
+            cacheName = "users",
+            key = "#userId",
+            ttl = 300
     )
     public User getUser(Long userId) {
         return userRepository.findById(userId);
     }
 
     @CacheWrite(
-        cacheName = "users",
-        key = "#user.id",
-        ttl = 300
+            cacheName = "users",
+            key = "#user.id",
+            ttl = 300
     )
     public User updateUser(User user) {
         return userRepository.save(user);
     }
 
     @CacheEvict(
-        cacheName = "users",
-        key = "#userId"
+            cacheName = "users",
+            key = "#userId"
     )
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
